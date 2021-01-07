@@ -4,7 +4,7 @@ var STATUS_CODE = ssh2.SFTP_STATUS_CODE;
 
 
 new ssh2.Server({
-  hostKeys: [""]
+  hostKeys: ["-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEAu0MBToNN8LtQOe07VuKNtTlh0RfcTKsPNxZvnsI1F+NgsaYUprgTvRVe\ncDciDqXDY/Vy+yay7+You5joq5nQdiBokyhyjNZghGr+qD5MyvnWXIjBITee3bODLvD0TIzF\n0tyHhR98RHjI1HJNN2jcffNHZzEWQebFn0bMXCRLlWI8Mczht1Hu9Kx6TOZ5rO+XUre7Lanr\nSxe27sjlRfTvZSKQ3SmZVDJYhfehbV7s2vCNL/pi5+7EMBlTgLtpAwoJO35AW6chB6yspGS1\nn3hWHBg2hn/qkivVDfRZhdw8blKSjEHjq+NxUs/FuVizAxpfyqbUR4YNi0N3dMWo17aiZwID\nAQABAoIBAFSbfRsmq0/hqelKPN3QRbuEPiRVVgVT4m9+1RbTY160LquFQN5k3BI59e3Ykyww\nC/x9WSKNhRpsEKpV94YU3IGKugUHKN5mO7yIhR+p6lNpF0e+yBfEhCRiJ5rNZmuxzO2tExP8\nOk7Ljd2i+S1YVQsZIIFIxegnptGEkO/uvDG1JziBJhdCv9BcuztVQY5oNMV5C+9aY8EScKfo\n6LDTXGCuR3lXdHQIYTOIptOdStJ8HujX/Flk1RxCZOfCSgTvGt5ObU0Nmplx0eX7T6dqop/r\nWcUp7YxaDH7WU/1Sqm/mhNDXOOI8/cz1NR/C1rfQAuFb6TK/w6usWDXRc9DmjdECgYEA5KlI\nddJyN2V2EpJeC4F0Y3m7+PI87xAPHmAyZca/TE3VCwjECXUljZelOEvJVtH0siO94DmiR7oS\nyglSOj7hJBHxxnlmyhvNrPtev2U/9SlXLMva8MDMePA6KraSoc0mmqBgiY6e21n4r2es1/Se\n7YhaO/H60jFkSjJ7VjTbEbECgYEA0aaXkPeSQ9MKgaXFSri3sJa8/P88mFOwaLWVTdfjBb/t\n4TMP6Fz92eJcrbJubkfChxhd9WQ3sG7jeTCX3c2CRURxTVeIpl199SupGTSaOGvvYG5hSsXN\nyonZtvwnBPpyR/WHRqzR+sr8/1JyBov/LWk4FlVfDJ4vSaq7W7lUI5cCgYEAjo8H8QUaVnU4\nTs3YOj4kbRxpWATWfok5k8uPwCpP++eOikmVxvu1RPildlqxlSJi92kXKSNljGhy7GkxTcUE\nIrPZU88+iYUaDt3NLXCXlmaGxhP2VSEumbvT1+tpsdywU7jnVvuHCOSoCduORDlrmFXpQ/RS\nVxeaGjQs9wsPBZECgYAYZgXfliBMimP/oJYsUwD1qSVHYEDiDWNLXE6K56QBCEwb2EByr1fP\noptcj5ZweSN3a2uL4mTkwJLyiKgz5PXTL9rrwFMj4V+GR9V/HHMSO+V42H+0Hv8LIi3XMNMt\nriPcogNjQzuQr0zwPd0NS/+ffk5LsxXDtykTrq3tR8018wKBgQCEgzYQ6k4B10A2hxc2ofq+\nUYIyznDWLk+m1LbfFezhLxyd51sCYnGYuRhIBwWsKcgUulYFHGWNFT86uqnJOAE3R8Ee4a4s\nYVUh2Hpd3D2Et/f1Bxfhu1qr0CK26KAox/0xaXkYLLWiANA5ajsNVgXkLgRHrH3wvkdRy/0h\n2zxXeg==\n-----END RSA PRIVATE KEY-----"]
 }, function(client) {
   console.log('Client connected!');
 client2=client
@@ -50,10 +50,18 @@ var auth;
 	 
       var session = accept();
     session.on('pty', function(accept, reject, info) {
-        //console.log('Pty event received: ' + require("util").inspect(info));
+        console.log('Pty event received: ' + require("util").inspect(info));
         var sshStream = accept();
       //  sshStream.exit(0);
       //  sshStream.end();
+      });
+	  session.on('window-change', function(accept, reject, info) {
+        //var sshStream = accept();
+		console.log("accept",accept)
+		console.log("reject",reject)
+        console.log("window-change has been changed")
+		console.log(info)
+      //  stream.end();
       });
     session.on('shell', function(accept, reject, info) {
         var sshStream = accept();
@@ -63,9 +71,10 @@ var auth;
     /*sshStream.on("data",function(data){
      sshStream.write(data);
     })*/
-    //stream2=sshStream
+	session2=session
+    stream2=sshStream
+    //require("./sshTerminal.js")(sshStream)
     require("./eval.js")(sshStream)
-    
 
       //  stream.write('Just kidding about the errors!\n');
       //  stream.exit(0);
